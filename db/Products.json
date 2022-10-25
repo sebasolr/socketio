@@ -1,0 +1,14 @@
+[
+  {
+    "titulo": "Pan",
+    "precio": "1980",
+    "imagen": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fes.dreamstime.com%2Fphotos-images%2Fpan.html&psig=AOvVaw0o6_YqUCbX8HD6ckbcH6vG&ust=1666789760304000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCPDIge65-_oCFQAAAAAdAAAAABAE",
+    "id": 1
+  },
+  {
+    "titulo": "Pan",
+    "precio": "1980",
+    "imagen": "https://thumbs.dreamstime.com/z/pan-redondo-49797570.jpg",
+    "id": 2
+  }
+]

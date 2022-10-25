@@ -1,0 +1,10 @@
+.chat-message{
+  padding: 1rem 0;
+  background-color: teal;
+  border-radius: 0.5rem;
+  margin: 0.7rem 0;
+}
+
+.chat-message-text{
+  color: aliceblue;
+}
