@@ -3,11 +3,10 @@ const { Server: HttpServer } = require("http")
 const { Server: SocketIOServer } = require("socket.io")
 const dayjs = require("dayjs")
 const customParseFormat = require('dayjs/plugin/customParseFormat')
+const {getData,save,deleteAll,deleteById,getAll,getById,updateById} = require('./models/container.js')
 
 dayjs.extend(customParseFormat)
 
-const Product = require("./models/product/product.model")
-const Message = require("./models/message/message.model")
 
 const app = express()
 const httpServer = new HttpServer(app)
@@ -38,15 +37,15 @@ io.on('connection', socket => {
 /* -------------------------------------------------------------------------- */
 
 const enviarTodosLosProductos = async (socket) => {
-  const allProduct = await Product.getAll()
+  const allProduct = await getAll()
   socket.emit("all products", allProduct)
   
   
 }
 
 const guardarProducto = async (newProduct) =>{
-    await Product.save(newProduct)
-    const allProduct = await Product.getAll()
+    await save(newProduct)
+    const allProduct = await getAll()
     io.sockets.emit("all products", allProduct)
 }
 
@@ -57,13 +56,13 @@ const guardarMensaje = async (message) =>{
   const date = new Date()
   const dateFormated = dayjs(date).format('DD/MM/YYYY hh:mm:ss')
   const newMessage = { ...message, createdAt: `${dateFormated} hs` }
-  await Message.save(newMessage)
-  const allMessage = await Message.getAll()
+  await save(newMessage)
+  const allMessage = await getAll()
   io.sockets.emit("all message", allMessage)
 }
 
 const enviarTodosLosMensajes = async (socket) => {
-  const allMessage = await Message.getAll()
+  const allMessage = await getAll()
   socket.emit("all message", allMessage)
   
 }

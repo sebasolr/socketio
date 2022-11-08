@@ -1,36 +1,30 @@
-const fSync = require('fs')
-const path = require('path')
-const fs = fSync.promises
+const connection = require('../config/index.js')
 
-class Container{
-    constructor(archivo) {
-      try {
-        this.filepath = path.join(process.cwd(), `/db/${archivo}.json`)
-        fSync.writeFileSync(this.filepath, '[]')
-        } catch (error) {
-          console.log(`Error en el constructor: ${error.message}`)
-        }
-    }
 
-    async getData(){
+    
+/**
+ * 
+ * @returns Trae la informacion de la base de datos.
+ */
+   const getData = async ()=>{
       try {
-        const data = await fs.readFile(this.filepath,'utf-8')
-        const arrayData = JSON.parse(data)
+     const data= await   connection.from('producto').select("*")
+     console.log(data)
         // Devuelvo el ultimo id utilizado incrementado en 1
-        if(arrayData.length)
-          return { newId: arrayData.at(-1).id + 1, data: arrayData }
-        return { newId: 1, data: arrayData}
+        if(data.length)
+          return { data: data  }
+        return { newId: 1, data: data}
       } catch (error) {
         console.log(`Error al leer un archivo: ${error.message}`)
         
       }
     }
 
-    async save(payload){
+    const save=async(payload)=>{
       try {
-        const { newId, data } = await this.getData()
-        data.push( {...payload, id: newId} )
-        await fs.writeFile(this.filepath, JSON.stringify(data, null, 2))
+        const { data } = await this.getData()
+        data.push( {...payload} )
+        connection.from('producto').insert(data)
         
       } catch (error) {
         console.log(`Error al guardar un objeto: ${error.message}`)
@@ -38,7 +32,7 @@ class Container{
       }
     }
     
-    async updateById(payload, id) {
+    const updateById =async (payload, id)=> {
       try {
         const { data } = await this.getData()
         const indexFound = data.findIndex( element => element.id === Number(id))
@@ -47,14 +41,14 @@ class Container{
           throw new Error('Elemento no encontrado')
         // Reemplazo el elemento indicado
         data.splice(indexFound, 1, {...payload, id})
-        await fs.writeFile(this.filepath, JSON.stringify(data, null, 2))
+       await connection.from('producto').where('id', id).update(payload)
 
       } catch (error) {
         console.log(`Error al eliminar un objeto: ${error.message}`)
       }
     }
 
-    async getById(id) {
+    const getById=async(id) =>{
       try {
         const { data } = await this.getData()
         const foundData = data.find( element => element.id === Number(id) )
@@ -66,7 +60,7 @@ class Container{
       }
     }
 
-    async getAll() {
+    const getAll=async()=> {
       try {
         const { data } = await this.getData()
         return data
@@ -75,7 +69,7 @@ class Container{
       }
     }
 
-    async deleteById(id) {
+    const deleteById=async(id) =>{
       try {
 
         const { data } = await this.getData()
@@ -85,20 +79,20 @@ class Container{
           throw new Error('Elemento no encontrado')
         // Elimino el elemento indicado
         data.splice(indexFound, 1)
-        await fs.writeFile(this.filepath, JSON.stringify(data, null, 2))
+        await connection.from('producto').where('id', id).del()
 
       } catch (error) {
         console.log(`Error al eliminar un objeto: ${error.message}`)
       }
     }
 
-    async deleteAll(){
+    const deleteAll=async()=>{
       try {
-        await fs.writeFile(this.filepath, '[]')
+        await connection.from('producto').del()
       } catch (error) {
         console.log(`Error al eliminar todos los objetos: ${error.message}`)
       }
     }
-}
 
-module.exports = Container
+
+module.exports =  {getData,save,deleteAll,deleteById,getAll,getById,updateById}
